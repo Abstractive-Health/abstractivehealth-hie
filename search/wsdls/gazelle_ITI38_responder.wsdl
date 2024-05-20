@@ -1,0 +1,1020 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="urn:ihe:iti:xds-b:2007" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:ns1="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" name="RespondingGateway_Service" targetNamespace="urn:ihe:iti:xds-b:2007">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:ns1="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0">
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"/>
+   <xs:element name="RegistryError" type="tns:RegistryError_._type"/>
+   <xs:element name="RegistryErrorList" type="tns:RegistryErrorList_._type"/>
+   <xs:element name="RegistryRequest" type="tns:RegistryRequestType"/>
+   <xs:element name="RegistryResponse" type="tns:RegistryResponseType"/>
+   <xs:complexType name="RegistryRequestType">
+      <xs:sequence>
+         <xs:element minOccurs="0" name="RequestSlotList" type="ns1:SlotListType"/>
+      </xs:sequence>
+      <xs:attribute name="comment" type="xs:string"/>
+      <xs:attribute name="id" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="RegistryResponseType">
+      <xs:sequence>
+         <xs:element minOccurs="0" name="ResponseSlotList" type="ns1:SlotListType"/>
+         <xs:element minOccurs="0" ref="tns:RegistryErrorList"/>
+      </xs:sequence>
+      <xs:attribute name="requestId" type="xs:string"/>
+      <xs:attribute name="status" type="xs:string" use="required"/>
+   </xs:complexType>
+   <xs:complexType name="RegistryErrorList_._type">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" ref="tns:RegistryError"/>
+      </xs:sequence>
+      <xs:attribute name="highestSeverity" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="RegistryError_._type">
+      <xs:simpleContent>
+         <xs:extension base="xs:string">
+            <xs:attribute name="codeContext" type="xs:string" use="required"/>
+            <xs:attribute name="errorCode" type="xs:string" use="required"/>
+            <xs:attribute name="location" type="xs:string"/>
+            <xs:attribute name="severity" type="xs:string"/>
+         </xs:extension>
+      </xs:simpleContent>
+   </xs:complexType>
+</xs:schema><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:ns2="http://www.w3.org/2004/08/xop/include" xmlns:ns1="urn:ihe:iti:xds-b:2007" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0">
+   <xs:import namespace="urn:ihe:iti:xds-b:2007"/>
+   <xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+   <xs:import namespace="http://www.w3.org/2004/08/xop/include"/>
+   <xs:element name="Action" type="tns:ActionType"/>
+   <xs:element name="AdhocQuery" type="tns:AdhocQueryType"/>
+   <xs:element name="Association" type="tns:AssociationType1"/>
+   <xs:element name="AuditableEvent" type="tns:AuditableEventType"/>
+   <xs:element name="Classification" type="tns:ClassificationType"/>
+   <xs:element name="ClassificationNode" type="tns:ClassificationNodeType"/>
+   <xs:element name="ClassificationScheme" type="tns:ClassificationSchemeType"/>
+   <xs:element name="ConformanceProfileType" type="tns:ConformanceProfileType"/>
+   <xs:element name="EmailAddress" type="tns:EmailAddressType"/>
+   <xs:element name="ExternalIdentifier" type="tns:ExternalIdentifierType"/>
+   <xs:element name="ExternalLink" type="tns:ExternalLinkType"/>
+   <xs:element name="ExtrinsicObject" type="tns:ExtrinsicObjectType"/>
+   <xs:element name="Federation" type="tns:FederationType"/>
+   <xs:element name="Identifiable" type="tns:IdentifiableType"/>
+   <xs:element name="InternationalStringType" type="tns:InternationalStringType"/>
+   <xs:element name="LocalizedString" type="tns:LocalizedStringType"/>
+   <xs:element name="Notification" type="tns:NotificationType"/>
+   <xs:element name="NotifyAction" type="tns:NotifyActionType"/>
+   <xs:element name="ObjectRef" type="tns:ObjectRefType"/>
+   <xs:element name="ObjectRefList" type="tns:ObjectRefListType"/>
+   <xs:element name="Organization" type="tns:OrganizationType"/>
+   <xs:element name="Person" type="tns:PersonType"/>
+   <xs:element name="PersonName" type="tns:PersonNameType"/>
+   <xs:element name="PostalAddressType" type="tns:PostalAddressType"/>
+   <xs:element name="QueryExpression" type="tns:QueryExpressionType"/>
+   <xs:element name="Registry" type="tns:RegistryType"/>
+   <xs:element name="RegistryObject" type="tns:RegistryObjectType"/>
+   <xs:element name="RegistryObjectList" type="tns:RegistryObjectListType"/>
+   <xs:element name="RegistryPackage" type="tns:RegistryPackageType"/>
+   <xs:element name="Service" type="tns:ServiceType"/>
+   <xs:element name="ServiceBinding" type="tns:ServiceBindingType"/>
+   <xs:element name="Slot" type="tns:SlotType1"/>
+   <xs:element name="SlotList" type="tns:SlotListType"/>
+   <xs:element name="SpecificationLink" type="tns:SpecificationLinkType"/>
+   <xs:element name="Subscription" type="tns:SubscriptionType"/>
+   <xs:element name="TelephoneNumber" type="tns:TelephoneNumberType"/>
+   <xs:element name="TelephoneNumberListType" type="tns:TelephoneNumberListType"/>
+   <xs:element name="User" type="tns:UserType"/>
+   <xs:element name="ValueList" type="tns:ValueListType"/>
+   <xs:element name="VersionInfoType" type="tns:VersionInfoType"/>
+   <xs:complexType name="AdhocQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element minOccurs="0" ref="tns:QueryExpression"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryObjectType">
+      <xs:complexContent>
+         <xs:extension base="tns:IdentifiableType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="Name" type="tns:InternationalStringType"/>
+               <xs:element minOccurs="0" name="Description" type="tns:InternationalStringType"/>
+               <xs:element minOccurs="0" name="VersionInfo" type="tns:VersionInfoType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:Classification"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ExternalIdentifier"/>
+            </xs:sequence>
+            <xs:attribute name="lid" type="xs:string"/>
+            <xs:attribute name="objectType" type="xs:string"/>
+            <xs:attribute name="status" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="IdentifiableType">
+      <xs:complexContent>
+         <xs:extension base="ns1:stringMatcher">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:Slot"/>
+            </xs:sequence>
+            <xs:attribute name="home" type="xs:string"/>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType mixed="true" name="QueryExpressionType">
+      <xs:sequence>
+         <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="skip"/>
+      </xs:sequence>
+      <xs:attribute name="queryLanguage" type="xs:string" use="required"/>
+   </xs:complexType>
+   <xs:complexType name="InternationalStringType">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:LocalizedString"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="LocalizedStringType">
+      <xs:sequence/>
+      <xs:attribute name="charset" type="xs:string"/>
+      <xs:attribute ref="xml:lang"/>
+      <xs:attribute name="value" type="xs:string" use="required"/>
+   </xs:complexType>
+   <xs:complexType name="VersionInfoType">
+      <xs:sequence/>
+      <xs:attribute name="comment" type="xs:string"/>
+      <xs:attribute name="versionName" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="ClassificationType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence/>
+            <xs:attribute name="classificationNode" type="xs:string"/>
+            <xs:attribute name="classificationScheme" type="xs:string"/>
+            <xs:attribute name="classifiedObject" type="xs:string" use="required"/>
+            <xs:attribute name="nodeRepresentation" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ExternalIdentifierType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence/>
+            <xs:attribute name="identificationScheme" type="xs:string" use="required"/>
+            <xs:attribute name="registryObject" type="xs:string" use="required"/>
+            <xs:attribute name="value" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="SlotType1">
+      <xs:complexContent>
+         <xs:extension base="ns1:stringMatcher">
+            <xs:sequence>
+               <xs:element ref="tns:ValueList"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="slotType" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ValueListType">
+      <xs:complexContent>
+         <xs:extension base="ns1:valueSetParser">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="Value" type="xs:string"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="AssociationType1">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence/>
+            <xs:attribute name="associationType" type="xs:string" use="required"/>
+            <xs:attribute name="sourceObject" type="xs:string" use="required"/>
+            <xs:attribute name="targetObject" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="AuditableEventType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element name="affectedObjects" type="tns:ObjectRefListType"/>
+            </xs:sequence>
+            <xs:attribute name="eventType" type="xs:string" use="required"/>
+            <xs:attribute name="requestId" type="xs:string" use="required"/>
+            <xs:attribute name="timestamp" type="xs:string" use="required"/>
+            <xs:attribute name="user" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ObjectRefListType">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ObjectRef"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="ObjectRefType">
+      <xs:complexContent>
+         <xs:extension base="tns:IdentifiableType">
+            <xs:sequence/>
+            <xs:attribute name="createReplica" type="xs:boolean"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ClassificationNodeType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ClassificationNode"/>
+            </xs:sequence>
+            <xs:attribute name="code" type="xs:string"/>
+            <xs:attribute name="parent" type="xs:string"/>
+            <xs:attribute name="path" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ClassificationSchemeType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ClassificationNode"/>
+            </xs:sequence>
+            <xs:attribute name="isInternal" type="xs:boolean" use="required"/>
+            <xs:attribute name="nodeType" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="EmailAddressType">
+      <xs:sequence/>
+      <xs:attribute name="address" type="xs:string" use="required"/>
+      <xs:attribute name="type" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="ExternalLinkType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence/>
+            <xs:attribute name="externalURI" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ExtrinsicObjectType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="ContentVersionInfo" type="tns:VersionInfoType"/>
+               <xs:element minOccurs="0" ref="ns1:Document"/>
+            </xs:sequence>
+            <xs:attribute name="isOpaque" type="xs:boolean"/>
+            <xs:attribute name="mimeType" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryObjectListType">
+      <xs:sequence>
+         <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="Identifiable" type="tns:IdentifiableType"/>
+            <xs:element name="Association" type="tns:AssociationType1"/>
+            <xs:element name="AuditableEvent" type="tns:AuditableEventType"/>
+            <xs:element name="Classification" type="tns:ClassificationType"/>
+            <xs:element name="ClassificationNode" type="tns:ClassificationNodeType"/>
+            <xs:element name="ClassificationScheme" type="tns:ClassificationSchemeType"/>
+            <xs:element name="ExternalIdentifier" type="tns:ExternalIdentifierType"/>
+            <xs:element name="ExternalLink" type="tns:ExternalLinkType"/>
+            <xs:element name="ExtrinsicObject" type="tns:ExtrinsicObjectType"/>
+            <xs:element name="Federation" type="tns:FederationType"/>
+            <xs:element name="ObjectRef" type="tns:ObjectRefType"/>
+            <xs:element name="Organization" type="tns:OrganizationType"/>
+            <xs:element name="Person" type="tns:PersonType"/>
+            <xs:element name="Registry" type="tns:RegistryType"/>
+            <xs:element name="RegistryObject" type="tns:RegistryObjectType"/>
+            <xs:element name="RegistryPackage" type="tns:RegistryPackageType"/>
+            <xs:element name="Service" type="tns:ServiceType"/>
+            <xs:element name="ServiceBinding" type="tns:ServiceBindingType"/>
+            <xs:element name="SpecificationLink" type="tns:SpecificationLinkType"/>
+            <xs:element name="Subscription" type="tns:SubscriptionType"/>
+            <xs:element name="User" type="tns:UserType"/>
+         </xs:choice>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="SlotListType">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:Slot"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="FederationType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence/>
+            <xs:attribute name="replicationSyncLatency" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="NotificationType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element ref="tns:RegistryObjectList"/>
+            </xs:sequence>
+            <xs:attribute name="subscription" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="NotifyActionType">
+      <xs:complexContent>
+         <xs:extension base="tns:ActionType">
+            <xs:sequence/>
+            <xs:attribute name="endPoint" type="xs:string" use="required"/>
+            <xs:attribute name="notificationOption" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="ActionType">
+      <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name="OrganizationType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="Address" type="tns:PostalAddressType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:TelephoneNumber"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:EmailAddress"/>
+            </xs:sequence>
+            <xs:attribute name="parent" type="xs:string"/>
+            <xs:attribute name="primaryContact" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="PostalAddressType">
+      <xs:sequence/>
+      <xs:attribute name="city" type="xs:string"/>
+      <xs:attribute name="country" type="xs:string"/>
+      <xs:attribute name="postalCode" type="xs:string"/>
+      <xs:attribute name="stateOrProvince" type="xs:string"/>
+      <xs:attribute name="street" type="xs:string"/>
+      <xs:attribute name="streetNumber" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="TelephoneNumberType">
+      <xs:sequence/>
+      <xs:attribute name="areaCode" type="xs:string"/>
+      <xs:attribute name="countryCode" type="xs:string"/>
+      <xs:attribute name="extension" type="xs:string"/>
+      <xs:attribute name="number" type="xs:string"/>
+      <xs:attribute name="phoneType" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="PersonNameType">
+      <xs:sequence/>
+      <xs:attribute name="firstName" type="xs:string"/>
+      <xs:attribute name="lastName" type="xs:string"/>
+      <xs:attribute name="middleName" type="xs:string"/>
+   </xs:complexType>
+   <xs:complexType name="PersonType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="Address" type="tns:PostalAddressType"/>
+               <xs:element minOccurs="0" ref="tns:PersonName"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:TelephoneNumber"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:EmailAddress"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryPackageType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element minOccurs="0" ref="tns:RegistryObjectList"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence/>
+            <xs:attribute name="catalogingLatency" type="xs:string"/>
+            <xs:attribute name="conformanceProfile" type="tns:ConformanceProfileType"/>
+            <xs:attribute name="operator" type="xs:string" use="required"/>
+            <xs:attribute name="replicationSyncLatency" type="xs:string"/>
+            <xs:attribute name="specificationVersion" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ServiceBindingType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:SpecificationLink"/>
+            </xs:sequence>
+            <xs:attribute name="accessURI" type="xs:string"/>
+            <xs:attribute name="service" type="xs:string" use="required"/>
+            <xs:attribute name="targetBinding" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="SpecificationLinkType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="UsageDescription" type="tns:InternationalStringType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="UsageParameter" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="serviceBinding" type="xs:string" use="required"/>
+            <xs:attribute name="specificationObject" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ServiceType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ServiceBinding"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="SubscriptionType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="Action" type="tns:ActionType"/>
+            </xs:sequence>
+            <xs:attribute name="endTime" type="xs:string"/>
+            <xs:attribute name="notificationInterval" type="xs:string"/>
+            <xs:attribute name="selector" type="xs:string" use="required"/>
+            <xs:attribute name="startTime" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="TelephoneNumberListType">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:TelephoneNumber"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="UserType">
+      <xs:complexContent>
+         <xs:extension base="tns:PersonType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="ConformanceProfileType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="registryFull"/>
+         <xs:enumeration value="registryLite"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:ns1="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0">
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"/>
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"/>
+   <xs:element name="AdhocQueryQuery" type="tns:AdhocQueryQueryType"/>
+   <xs:element name="AdhocQueryRequest" type="tns:AdhocQueryRequest_._type"/>
+   <xs:element name="AdhocQueryResponse" type="tns:AdhocQueryResponse_._type"/>
+   <xs:element name="AssociationQuery" type="tns:AssociationQueryType"/>
+   <xs:element name="AuditableEventQuery" type="tns:AuditableEventQueryType"/>
+   <xs:element name="BooleanFilter" type="tns:BooleanFilterType"/>
+   <xs:element name="BranchType" type="tns:BranchType"/>
+   <xs:element name="ClassificationNodeQuery" type="tns:ClassificationNodeQueryType"/>
+   <xs:element name="ClassificationQuery" type="tns:ClassificationQueryType"/>
+   <xs:element name="ClassificationSchemeQuery" type="tns:ClassificationSchemeQueryType"/>
+   <xs:element name="ComparatorType" type="tns:ComparatorType"/>
+   <xs:element name="CompoundFilter" type="tns:CompoundFilterType"/>
+   <xs:element name="DateTimeFilter" type="tns:DateTimeFilterType"/>
+   <xs:element name="ExternalIdentifierQuery" type="tns:ExternalIdentifierQueryType"/>
+   <xs:element name="ExternalLinkQuery" type="tns:ExternalLinkQueryType"/>
+   <xs:element name="ExtrinsicObjectQuery" type="tns:ExtrinsicObjectQueryType"/>
+   <xs:element name="FederationQuery" type="tns:FederationQueryType"/>
+   <xs:element name="Filter" type="tns:FilterType"/>
+   <xs:element name="FilterQueryType" type="tns:FilterQueryType"/>
+   <xs:element name="FloatFilter" type="tns:FloatFilterType"/>
+   <xs:element name="IntegerFilter" type="tns:IntegerFilterType"/>
+   <xs:element name="InternationalStringBranchType" type="tns:InternationalStringBranchType"/>
+   <xs:element name="LogicalOperatorType" type="tns:LogicalOperatorType"/>
+   <xs:element name="NotificationQuery" type="tns:NotificationQueryType"/>
+   <xs:element name="OrganizationQuery" type="tns:OrganizationQueryType"/>
+   <xs:element name="PersonQuery" type="tns:PersonQueryType"/>
+   <xs:element name="QueryExpressionBranchType" type="tns:QueryExpressionBranchType"/>
+   <xs:element name="RegistryObjectQuery" type="tns:RegistryObjectQueryType"/>
+   <xs:element name="RegistryPackageQuery" type="tns:RegistryPackageQueryType"/>
+   <xs:element name="RegistryQuery" type="tns:RegistryQueryType"/>
+   <xs:element name="ResponseOption" type="tns:ResponseOptionType"/>
+   <xs:element name="ReturnTypeType" type="tns:ReturnTypeType"/>
+   <xs:element name="ServiceBindingQuery" type="tns:ServiceBindingQueryType"/>
+   <xs:element name="ServiceQuery" type="tns:ServiceQueryType"/>
+   <xs:element name="SimpleFilterType" type="tns:SimpleFilterType"/>
+   <xs:element name="SlotBranchType" type="tns:SlotBranchType"/>
+   <xs:element name="SpecificationLinkQuery" type="tns:SpecificationLinkQueryType"/>
+   <xs:element name="StringFilter" type="tns:StringFilterType"/>
+   <xs:element name="SubscriptionQuery" type="tns:SubscriptionQueryType"/>
+   <xs:element name="UserQuery" type="tns:UserQueryType"/>
+   <xs:complexType name="AdhocQueryRequest_._type">
+      <xs:complexContent>
+         <xs:extension base="ns2:RegistryRequestType">
+            <xs:sequence>
+               <xs:element ref="tns:ResponseOption"/>
+               <xs:element ref="ns1:AdhocQuery"/>
+            </xs:sequence>
+            <xs:attribute name="federated" type="xs:boolean"/>
+            <xs:attribute name="federation" type="xs:string"/>
+            <xs:attribute name="maxResults" type="xs:string"/>
+            <xs:attribute name="startIndex" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ResponseOptionType">
+      <xs:sequence/>
+      <xs:attribute name="returnComposedObjects" type="xs:boolean"/>
+      <xs:attribute name="returnType" type="tns:ReturnTypeType"/>
+   </xs:complexType>
+   <xs:complexType name="AdhocQueryResponse_._type">
+      <xs:complexContent>
+         <xs:extension base="ns2:RegistryResponseType">
+            <xs:sequence>
+               <xs:element ref="ns1:RegistryObjectList"/>
+            </xs:sequence>
+            <xs:attribute name="startIndex" type="xs:string"/>
+            <xs:attribute name="totalResultCount" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="FederationQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryObjectQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:FilterQueryType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="SlotBranch" type="tns:SlotBranchType"/>
+               <xs:element minOccurs="0" name="NameBranch" type="tns:InternationalStringBranchType"/>
+               <xs:element minOccurs="0" name="DescriptionBranch" type="tns:InternationalStringBranchType"/>
+               <xs:element minOccurs="0" name="VersionInfoFilter" type="tns:FilterType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ClassificationQuery"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ExternalIdentifierQuery"/>
+               <xs:element minOccurs="0" name="ObjectTypeQuery" type="tns:ClassificationNodeQueryType"/>
+               <xs:element minOccurs="0" name="StatusQuery" type="tns:ClassificationNodeQueryType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="SourceAssociationQuery" type="tns:AssociationQueryType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="TargetAssociationQuery" type="tns:AssociationQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="FilterQueryType">
+      <xs:sequence>
+         <xs:element minOccurs="0" name="PrimaryFilter" type="tns:FilterType"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="SlotBranchType">
+      <xs:complexContent>
+         <xs:extension base="tns:BranchType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="BranchType">
+      <xs:complexContent>
+         <xs:extension base="tns:FilterQueryType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="FilterType">
+      <xs:sequence/>
+      <xs:attribute name="negate" type="xs:boolean"/>
+   </xs:complexType>
+   <xs:complexType name="InternationalStringBranchType">
+      <xs:complexContent>
+         <xs:extension base="tns:BranchType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="LocalizedStringFilter" type="tns:FilterType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ClassificationQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" ref="tns:ClassificationSchemeQuery"/>
+               <xs:element minOccurs="0" name="ClassifiedObjectQuery" type="tns:RegistryObjectQueryType"/>
+               <xs:element minOccurs="0" ref="tns:ClassificationNodeQuery"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ClassificationSchemeQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="ChildrenQuery" type="tns:ClassificationNodeQueryType"/>
+               <xs:element minOccurs="0" name="NodeTypeQuery" type="tns:ClassificationNodeQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ClassificationNodeQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="ParentQuery" type="tns:RegistryObjectQueryType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="ChildrenQuery" type="tns:ClassificationNodeQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ExternalIdentifierQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" ref="tns:RegistryObjectQuery"/>
+               <xs:element minOccurs="0" name="IdentificationSchemeQuery" type="tns:ClassificationSchemeQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="AssociationQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="AssociationTypeQuery" type="tns:ClassificationNodeQueryType"/>
+               <xs:element minOccurs="0" name="SourceObjectQuery" type="tns:RegistryObjectQueryType"/>
+               <xs:element minOccurs="0" name="TargetObjectQuery" type="tns:RegistryObjectQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="FloatFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:SimpleFilterType">
+            <xs:sequence/>
+            <xs:attribute name="value" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="SimpleFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:FilterType">
+            <xs:sequence/>
+            <xs:attribute name="comparator" type="tns:ComparatorType" use="required"/>
+            <xs:attribute name="domainAttribute" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="IntegerFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:SimpleFilterType">
+            <xs:sequence/>
+            <xs:attribute name="value" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="NotificationQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" ref="tns:RegistryObjectQuery"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="OrganizationQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="AddressFilter" type="tns:FilterType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="TelephoneNumberFilter" type="tns:FilterType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="EmailAddressFilter" type="tns:FilterType"/>
+               <xs:element minOccurs="0" name="ParentQuery" type="tns:OrganizationQueryType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="ChildOrganizationQuery" type="tns:OrganizationQueryType"/>
+               <xs:element minOccurs="0" name="PrimaryContactQuery" type="tns:PersonQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="PersonQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="AddressFilter" type="tns:FilterType"/>
+               <xs:element minOccurs="0" name="PersonNameFilter" type="tns:FilterType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="TelephoneNumberFilter" type="tns:FilterType"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="EmailAddressFilter" type="tns:FilterType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryPackageQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="RegistryQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="OperatorQuery" type="tns:OrganizationQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ServiceBindingQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" ref="tns:ServiceQuery"/>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:SpecificationLinkQuery"/>
+               <xs:element minOccurs="0" name="TargetBindingQuery" type="tns:ServiceBindingQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ServiceQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:ServiceBindingQuery"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="SpecificationLinkQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="UsageDescriptionBranch" type="tns:InternationalStringBranchType"/>
+               <xs:element minOccurs="0" ref="tns:ServiceBindingQuery"/>
+               <xs:element minOccurs="0" name="SpecificationObjectQuery" type="tns:RegistryObjectQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="AdhocQueryQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="QueryExpressionBranch" type="tns:QueryExpressionBranchType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="QueryExpressionBranchType">
+      <xs:complexContent>
+         <xs:extension base="tns:BranchType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="QueryLanguageQuery" type="tns:ClassificationNodeQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="StringFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:SimpleFilterType">
+            <xs:sequence/>
+            <xs:attribute name="value" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="SubscriptionQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="SelectorQuery" type="tns:AdhocQueryQueryType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="UserQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:PersonQueryType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="BooleanFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:SimpleFilterType">
+            <xs:sequence/>
+            <xs:attribute name="value" type="xs:boolean" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="CompoundFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:FilterType">
+            <xs:sequence>
+               <xs:element name="LeftFilter" type="tns:FilterType"/>
+               <xs:element name="RightFilter" type="tns:FilterType"/>
+            </xs:sequence>
+            <xs:attribute name="logicalOperator" type="tns:LogicalOperatorType" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="DateTimeFilterType">
+      <xs:complexContent>
+         <xs:extension base="tns:SimpleFilterType">
+            <xs:sequence/>
+            <xs:attribute name="value" type="xs:string" use="required"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ExternalLinkQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="ExtrinsicObjectQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element minOccurs="0" name="ContentVersionInfoFilter" type="tns:FilterType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="AuditableEventQueryType">
+      <xs:complexContent>
+         <xs:extension base="tns:RegistryObjectQueryType">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="AffectedObjectQuery" type="tns:RegistryObjectQueryType"/>
+               <xs:element minOccurs="0" name="EventTypeQuery" type="tns:ClassificationNodeQueryType"/>
+               <xs:element minOccurs="0" ref="tns:UserQuery"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="ReturnTypeType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="ObjectRef"/>
+         <xs:enumeration value="RegistryObject"/>
+         <xs:enumeration value="LeafClass"/>
+         <xs:enumeration value="LeafClassWithRepositoryItem"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="ComparatorType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="LE"/>
+         <xs:enumeration value="LT"/>
+         <xs:enumeration value="GE"/>
+         <xs:enumeration value="GT"/>
+         <xs:enumeration value="EQ"/>
+         <xs:enumeration value="NE"/>
+         <xs:enumeration value="Like"/>
+         <xs:enumeration value="NotLike"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="LogicalOperatorType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="AND"/>
+         <xs:enumeration value="OR"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:ns1="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0">
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"/>
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"/>
+   <xs:element name="SubmitObjectsRequest" type="tns:SubmitObjectsRequest_._type"/>
+   <xs:complexType name="SubmitObjectsRequest_._type">
+      <xs:complexContent>
+         <xs:extension base="ns2:RegistryRequestType">
+            <xs:sequence>
+               <xs:element ref="ns1:RegistryObjectList"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+</xs:schema><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:tns="urn:ihe:iti:xds-b:2007" xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:ns1="http://www.w3.org/2004/08/xop/include" xmlns:ns0="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:ihe:iti:xds-b:2007">
+   <xs:import namespace="http://www.w3.org/2004/08/xop/include"/>
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"/>
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0"/>
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"/>
+   <xs:import namespace="http://www.w3.org/2005/05/xmlmime"/>
+   <xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"/>
+   <xs:element name="Document" type="tns:Document_._type"/>
+   <xs:element name="DocumentRequest_._type" type="tns:DocumentRequest_._type"/>
+   <xs:element name="DocumentResponse_._type" type="tns:DocumentResponse_._type"/>
+   <xs:element name="Document_._type" type="tns:Document_._type"/>
+   <xs:element name="ProvideAndRegisterDocumentSetRequest" type="tns:ProvideAndRegisterDocumentSetRequestType"/>
+   <xs:element name="RetrieveDocumentSetRequest" type="tns:RetrieveDocumentSetRequestType"/>
+   <xs:element name="RetrieveDocumentSetResponse" type="tns:RetrieveDocumentSetResponseType"/>
+   <xs:complexType name="stringMatcher">
+      <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name="valueSetParser">
+      <xs:complexContent>
+         <xs:extension base="tns:stringMatcher">
+            <xs:sequence/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType mixed="true" name="Document_._type">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" ref="ns1:Include"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+   </xs:complexType>
+   <xs:complexType name="ProvideAndRegisterDocumentSetRequestType">
+      <xs:sequence>
+         <xs:element ref="ns3:SubmitObjectsRequest"/>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="Document" type="tns:Document_._type"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="DocumentRequest_._type">
+      <xs:sequence>
+         <xs:element minOccurs="0" name="HomeCommunityId" type="xs:string"/>
+         <xs:element name="RepositoryUniqueId" type="xs:string"/>
+         <xs:element name="DocumentUniqueId" type="xs:string"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="DocumentResponse_._type">
+      <xs:sequence>
+         <xs:element minOccurs="0" name="HomeCommunityId" type="xs:string"/>
+         <xs:element name="RepositoryUniqueId" type="xs:string"/>
+         <xs:element name="DocumentUniqueId" type="xs:string"/>
+         <xs:element minOccurs="0" name="NewRepositoryUniqueId" type="xs:string"/>
+         <xs:element minOccurs="0" name="NewDocumentUniqueId" type="xs:string"/>
+         <xs:element name="mimeType" type="xs:string"/>
+         <xs:element name="Document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="RetrieveDocumentSetRequestType">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" name="DocumentRequest" type="tns:DocumentRequest_._type"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="RetrieveDocumentSetResponseType">
+      <xs:sequence>
+         <xs:element ref="ns4:RegistryResponse"/>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="DocumentResponse" type="tns:DocumentResponse_._type"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:element name="RespondingGateway_CrossGatewayQuery" nillable="true" type="ns0:AdhocQueryRequest_._type"/>
+</xs:schema><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.w3.org/XML/1998/namespace" version="1.0">
+   <xs:attribute name="lang" type="xs:string"/>
+</xs:schema><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.w3.org/2004/08/xop/include" elementFormDefault="qualified" targetNamespace="http://www.w3.org/2004/08/xop/include" version="1.0">
+   <xs:element name="Include" type="tns:Include"/>
+   <xs:complexType name="Include">
+      <xs:sequence/>
+      <xs:attribute name="href" type="xs:string" use="required"/>
+   </xs:complexType>
+</xs:schema>  </wsdl:types>
+  <wsdl:message name="RespondingGateway_CrossGatewayQuery">
+    <wsdl:part element="tns:RespondingGateway_CrossGatewayQuery" name="RespondingGateway_CrossGatewayQuery">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RespondingGateway_CrossGatewayRetrieveResponse">
+    <wsdl:part element="tns:RetrieveDocumentSetResponse" name="body">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RespondingGateway_CrossGatewayQueryResponse">
+    <wsdl:part element="ns1:AdhocQueryResponse" name="body">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RespondingGateway_CrossGatewayRetrieve">
+    <wsdl:part element="tns:RetrieveDocumentSetRequest" name="body">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="RespondingGatewayQuery">
+    <wsdl:operation name="RespondingGateway_CrossGatewayQuery">
+      <wsdl:input message="tns:RespondingGateway_CrossGatewayQuery" name="RespondingGateway_CrossGatewayQuery" wsam:Action="urn:ihe:iti:2007:CrossGatewayQuery" wsaw:Action="urn:ihe:iti:2007:CrossGatewayQuery">
+    </wsdl:input>
+      <wsdl:output message="tns:RespondingGateway_CrossGatewayQueryResponse" name="RespondingGateway_CrossGatewayQueryResponse" wsam:Action="urn:ihe:iti:2007:CrossGatewayQueryResponse" wsaw:Action="urn:ihe:iti:2007:CrossGatewayQueryResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RespondingGateway_CrossGatewayRetrieve">
+      <wsdl:input message="tns:RespondingGateway_CrossGatewayRetrieve" name="RespondingGateway_CrossGatewayRetrieve" wsam:Action="urn:ihe:iti:2007:CrossGatewayRetrieve" wsaw:Action="urn:ihe:iti:2007:CrossGatewayRetrieve">
+    </wsdl:input>
+      <wsdl:output message="tns:RespondingGateway_CrossGatewayRetrieveResponse" name="RespondingGateway_CrossGatewayRetrieveResponse" wsam:Action="urn:ihe:iti:2007:CrossGatewayRetrieveResponse" wsaw:Action="urn:ihe:iti:2007:CrossGatewayRetrieveResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RespondingGateway_ServiceSoapBinding" type="tns:RespondingGatewayQuery">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsaw:UsingAddressing wsdl:required="false"/>
+    <wsp:PolicyReference URI="#RespondingGateway_ServiceSoapBinding_WSAM_Addressing_Policy"/>
+    <wsdl:operation name="RespondingGateway_CrossGatewayQuery">
+      <soap12:operation soapAction="urn:ihe:iti:2007:CrossGatewayQuery" style="document"/>
+      <wsdl:input name="RespondingGateway_CrossGatewayQuery">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="RespondingGateway_CrossGatewayQueryResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RespondingGateway_CrossGatewayRetrieve">
+      <soap12:operation soapAction="urn:ihe:iti:2007:CrossGatewayRetrieve" style="document"/>
+      <wsdl:input name="RespondingGateway_CrossGatewayRetrieve">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="RespondingGateway_CrossGatewayRetrieveResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RespondingGateway_Service">
+    <wsdl:port binding="tns:RespondingGateway_ServiceSoapBinding" name="RespondingGatewayQuery_Port_Soap12">
+      <soap12:address location="yourownurl"/>
+    </wsdl:port>
+  </wsdl:service>
+    <wsp:Policy xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="RespondingGateway_ServiceSoapBinding_WSAM_Addressing_Policy"><wsam:Addressing wsp:Optional="true"><wsp:Policy/></wsam:Addressing></wsp:Policy>
+</wsdl:definitions>

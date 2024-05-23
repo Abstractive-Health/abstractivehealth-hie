@@ -182,9 +182,12 @@ class Saml(object):
 
         sub_tag = saml_root.xpath(
             "/samlns:Assertion/samlns:Subject/samlns:SubjectConfirmation/samlns:SubjectConfirmationData",
-            namespaces={'samlns': 'urn:oasis:names:tc:SAML:2.0:assertion'})
-        sub_tag[0].attrib[QName("urn:oasis:names:tc:SAML:2.0:assertion",
-                                "type")] = "KeyInfoConfirmationDataType"
+            namespaces={
+                'samlns': 'urn:oasis:names:tc:SAML:2.0:assertion',
+                'xsi': "http://www.w3.org/2001/XMLSchema-instance"
+            })
+        sub_tag[0].attrib[QName("http://www.w3.org/2001/XMLSchema-instance",
+                                "type")] = "samlns:KeyInfoConfirmationDataType"
 
         # Create the KeyInfo element in Subject with RSAKeyValue
         key_map = {"dsig": "http://www.w3.org/2000/09/xmldsig#"}

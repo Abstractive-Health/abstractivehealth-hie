@@ -2,6 +2,7 @@ import base64
 import boto3
 import json
 import os
+import random
 import time
 
 import requests
@@ -19,6 +20,11 @@ s3_client = boto3.client('s3', endpoint_url="https://s3.amazonaws.com/")
 DB_HOST_NAME = ''
 S3_BUCKET_NAME = ''
 CQPROD_STU3_TABLE_NAME = ''
+
+with open('national.json') as f:
+    NATIONALS = json.load(f)
+with open('states.json') as f:
+    STATES = json.load(f)
 
 response = {
     "statusCode": 200,
@@ -88,74 +94,91 @@ def insert_long_lat():
     return
 
 
-def get_endpoints(zip_codes, radius=100, exclude=[]):
+def get_endpoints(zip_states, each=1, exclude_national=True):
     '''
-    get endpoints of radius around any of the zip codes
-    output should not contain duplicates or invalid endpoints (bad urls)
-    if exclude is not empty, then exclude those endpoints according to name.
+    get endpoints around each of the zip code,
+    return as close to `each` endpoints as possible but do not exceed.
+    prioritize 10 mi radius, then 30, then 100
     '''
-    zip_codes = [zip_code.split('-')[0] if '-' in zip_code else zip_code for zip_code in zip_codes]
+    print("received each", each)
+    zip_states = [[zipcode.split('-')[0], state]
+                  if '-' in zipcode
+                  else [zipcode, state]
+                  for zipcode, state in zip_states]
+    excluded = set()
+    if exclude_national:
+        for endpoint in NATIONALS:
+            excluded.add((endpoint['oid'], endpoint['iti55_responder']))
 
     # TODO: remove
     temp = []
-    for zipcode in zip_codes:
-        temp.append(zipcode.lstrip("0"))
+    for zipcode, state in zip_states:
+        temp.append([zipcode.lstrip("0"), state])
 
-    zip_codes = temp
+    zip_states = temp
 
-    print("processed zip codes,", zip_codes)
+    print("processed zip codes & states,", zip_states)
     # get the nearby zipcodes
     connection = get_cq_db_connection()
     cur = connection.cursor()
 
-    radius_column = 'neighboring_zipcodes_' + str(radius) + 'mi'
-    cur.execute("SELECT " + radius_column +
-                " FROM zipcode_neighbors WHERE zipcode IN %s", (tuple(zip_codes),))
-    nearby_zipcodes = cur.fetchall() or []
-    print("nearby_zipcodes,", nearby_zipcodes)
-    set_nearby_zipcodes = set()
-    for zip_list_tup in nearby_zipcodes:
-        new_zips = zip_list_tup[0]
-        for new_zip in new_zips:
-            set_nearby_zipcodes.add(new_zip)
-    nearby_zipcodes = set_nearby_zipcodes
-    # TODO: remove
-    nearby_zipcodes = tuple([zipcode.rjust(5, "0") for zipcode in nearby_zipcodes])
+    zips_to_endpoints = {}
+    radius_priority_list = [10, 30, 100]
 
-    # get the endpoints
-    cur.execute(
-        "SELECT oid, name, iti55_responder, iti38_responder, iti39_responder FROM %s WHERE zipcode IN %s and status",
-        (CQPROD_STU3_TABLE_NAME, nearby_zipcodes,))
-    endpoints = cur.fetchall()
+    for zipcode, state in zip_states:
+        # first, grab all state endpoints
+        state_endpoints = STATES.get(state, [])
+        filled_endpoints = [(endpoint['oid'],
+                             endpoint['name'],
+                             endpoint['iti55_responder'],
+                             endpoint['iti38_responder'],
+                             endpoint['iti39_responder'])
+                            for endpoint in state_endpoints]
+        # then fill by radius 10 -> 100
+        for radius in radius_priority_list:
+            radius_column = 'neighboring_zipcodes_' + str(radius) + 'mi'
+            cur.execute("SELECT " + radius_column +
+                        " FROM zipcode_neighbors WHERE zipcode = %s", (zipcode,))
+            nearby_zipcodes = cur.fetchall() or []
+            set_nearby_zipcodes = set()
+            for zip_list_tup in nearby_zipcodes:
+                new_zips = zip_list_tup[0]
+                for new_zip in new_zips:
+                    set_nearby_zipcodes.add(new_zip)
+            nearby_zipcodes = set_nearby_zipcodes
+            # TODO: remove
+            nearby_zipcodes = tuple([zipcode.rjust(5, "0") for zipcode in nearby_zipcodes])
+            print("nearby_zipcodes,", nearby_zipcodes)
+
+            if nearby_zipcodes:
+                # get the endpoints
+                cur.execute(
+                    """
+                    SELECT oid, name, iti55_responder, iti38_responder, iti39_responder
+                    FROM prod_stu3_directory
+                    WHERE zipcode IN %s
+                    AND managing_org NOT IN %s
+                    AND status
+                    """,
+                    (nearby_zipcodes, tuple(BAD_IMPLEMENTERS))
+                )
+                endpoints = cur.fetchall()
+                if len(filled_endpoints) + len(endpoints) >= each:  # fill "up to"
+                    filled_endpoints += random.choices(endpoints, k=each - len(filled_endpoints))
+                    break
+
+        endpoint_dicts = utils.validate_endpoint_dicts(filled_endpoints, exclude=excluded)
+
+        # TODO: remove
+        zipcode = zipcode.rjust(5, "0")
+        zips_to_endpoints[zipcode] = endpoint_dicts
+
+    print({zipcode: len(zips_to_endpoints[zipcode]) for zipcode in zips_to_endpoints})
 
     cur.close()
     connection.close()
-    # post process oid
-    endpoint_dicts = set()
-    for endpoint in endpoints:
-        oid = endpoint[0] if 'urn:oid:' not in endpoint[0] else endpoint[0].split('urn:oid:')[1]
 
-        validated_endpoint = utils.validate_endpoint_dict({
-            'oid': oid,
-            'name': endpoint[1],
-            'iti55_responder': endpoint[2],
-            'iti38_responder': endpoint[3],
-            'iti39_responder': endpoint[4]
-        },
-            set(exclude),
-        )
-
-        if validated_endpoint is not None:
-            endpoint_dicts.add(str(validated_endpoint))
-
-    # here's how you would constrain to integrated pipelines, though epic makes it hard
-    # SELECT *
-    # FROM stu3_directory
-    # WHERE resource->'Organization'->'id'->>'value' IN ('2.16.840.1.113883.3.564.1', 'urn:oid:2.16.840.1.113883.3.564.1')
-    # OR resource->'Organization'->'partOf'->'identifier'->'value'->>'value' IN ('2.16.840.1.113883.3.564.1', 'urn:oid:2.16.840.1.113883.3.564.1');
-
-    response['body'] = json.dumps([eval(endpoint) for endpoint in endpoint_dicts])
-    print("about to return response", response['body'])
+    response['body'] = json.dumps(zips_to_endpoints)
     return response
 
 
@@ -174,26 +197,54 @@ def lambda_handler(event, context):
             event['body'] = json.loads(event['body'])
 
     action = event['body']['action']
-    if action == 'insert_downloaded_directory':
-        pass
-        # return insert_downloaded_directory()
-    elif action == 'insert_prod_directory':
-        return insert_prod_directory()
+    if action == 'download_data':
+        print('downloading data...')
+        success = download_data()
+        if success:
+            act = {"body": {"action": "process_data"}}
+
+            lambda_client = boto3.client('lambda')
+            lambda_client.invoke(FunctionName=context.function_name,
+                                 InvocationType='Event',
+                                 Payload=json.dumps(act))
+
+            # act = json.dumps(act)
+        else:
+            print("failed to download data")
+        return
+
+    elif action == 'process_data':
+        print('processing data...')
+        final_list = process_data()
+        s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f'processed_data.json',
+                             Body=json.dumps(final_list))
+
+        batch_size = 30000
+        for i in range(0, len(final_list), batch_size):
+            print("called insert i=", i)
+            act = {"body": {"action": "insert_data", "start": i, "batch_size": batch_size}}
+
+            lambda_client = boto3.client('lambda')
+            lambda_client.invoke(FunctionName=context.function_name,
+                                 InvocationType='Event',
+                                 Payload=json.dumps(act))
+            time.sleep(60)
+        return
+    elif action == 'insert_data':
+        print('inserting data...')
+        final_list = utils.read_data_from_s3('processed_data.json', s3_client, S3_BUCKET_NAME)
+        start = event['body']['start']
+        batch_size = event['body']['batch_size']
+        insert_table(final_list, start, batch_size)
+
     elif action == 'getNationalEndpoints':
-        with open('national.json') as f:
-            response['body'] = json.dumps(json.load(f))
+        response['body'] = json.dumps(NATIONALS)
         return response
     elif action == 'getEndpoints':
         print("getting endpoints...")
         params = event['body']['params']
-        radius = params['radius'] if 'radius' in params else 100
-        country = params['country'] if 'country' in params else "US"
-        # these national endpoints we got responses for already
-        exclude = params['exclude'] if 'exclude' in params else []
-
-        if country not in ["US", "USA"]:
-            return []
-        zip_codes = params['zip_codes']
-        return get_endpoints(zip_codes, radius, exclude)
+        zip_codes = params['zip_codes']  # [[zip1, state1], [zip2, state2], ...]
+        each = params['each'] if 'each' in params else False
+        return get_endpoints(zip_codes, each)
     elif action == 'augmentLongLat':
         return insert_long_lat()

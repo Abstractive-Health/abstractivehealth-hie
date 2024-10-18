@@ -3,6 +3,10 @@ import json
 import os
 
 import psycopg2
+import psycopg2.extras
+import requests
+
+import utils
 
 ENV = os.environ.get("ENV")
 secretsmanager = boto3.client('secretsmanager')
@@ -13,254 +17,381 @@ s3_client = boto3.client('s3', endpoint_url="https://s3.amazonaws.com/")
 # host used to connect to PostgreSQL
 DB_HOST_NAME = ''
 S3_BUCKET_NAME = ''
-CQPROD_STU3_TABLE_NAME = ''
+TABLE_NAME = ''
+
+def download_data():
+    cq_dir_api_key = secret_params['prod_api_key']
+    cq_dir_api_url = secret_params['prod_url']
+    # accept encoding: gzip
+    headers = {'Accept-Encoding': 'gzip'}
+
+    # start of the range of entries to download
+    start = 0
+    # number of entries to download in each request
+    COUNT = 10000
+    # limit of entries to download, should be very large
+    LIMIT = 100000
+    complete_json = []
+
+    while start < LIMIT:
+        params = {'apikey': cq_dir_api_key, "_format": "json", "_count": COUNT, "_start": start}
+        try:
+            r = requests.get(cq_dir_api_url, headers=headers, params=params)
+            if r.status_code != 200:
+                print(f'Error, status code {r.status_code}, starting at {start}')
+                return False  # early return because cannot trust the pull, so will not write a new json
+            response = r.content.decode('utf-8')
+            # add the response to the complete_json list
+            complete_json.append(response)
+            print(start)
+            # print(response)
+            # response = response.content.decode('utf-8')
+        except:
+            try:
+                r = requests.get(cq_dir_api_url, headers=headers, params=params)
+                if r.status_code != 200:
+                    print(f'Error, status code {r.status_code}')
+                    break
+                response = r.content.decode('utf-8')
+                # add the response to the complete_json list
+                complete_json.append(response)
+                print(start)
+            except:
+                break
+
+        start = start + COUNT
+
+    s3_client.put_object(Bucket=S3_BUCKET_NAME, Key=f'downloaded_json_list.json',
+                         Body=json.dumps(complete_json))
+    return True
+
+
+def traverse_json_list(json_list):
+    '''
+    Traverses the list of jsons pulled and reformats them as a list of dictionaries for each entry.
+    Arguments:
+    json_list: list of jsons
+    Returns:
+    final_list: list of dictionaries
+    '''
+    # PART 1: GENERATE DICTIONARY OF ID TO URLS
+
+    # Defines a function that recursively gets the URLs for a given ID later in the process.
+    def recursively_get_urls(id, id_dict):
+        if id in id_dict:
+            if id_dict[id]['iti55'] is not None and id_dict[id]['iti38'] is not None and id_dict[id]['iti39'] is not None:
+                return id_dict[id]
+            elif id_dict[id]['part_of'] is not id:
+                return recursively_get_urls(id_dict[id]['part_of'], id_dict)
+            else:
+                return None
+        else:
+            return None
+
+    oid_dict = {}
+
+    json_list_length = len(json_list)
+    for i in range(json_list_length):
+        json_obj = json_list[i]['Bundle']['entry']
+        json_obj_length = len(json_obj)
+        for j in range(json_obj_length):
+            sub_json_obj = json_obj[j]['resource']
+
+            oid = None
+            iti55 = None
+            iti38 = None
+            iti39 = None
+            partOf = None
+
+            try:
+                oid = sub_json_obj['Organization']['id']['value']
+            except KeyError:
+                pass
+
+            # Try to access the URLs, if they exist, store them in the dictionary, if not set to None.
+            try:
+                for k in range(len(sub_json_obj['Organization']['contained'])):
+                    try:
+                        use_name = sub_json_obj['Organization']['contained'][k]['Endpoint'][
+                            'name']['value']
+                        if use_name == 'Patient Discovery':
+                            iti55 = sub_json_obj['Organization']['contained'][k]['Endpoint'][
+                                'address']['value']
+                        if use_name == 'Query for Documents':
+                            iti38 = sub_json_obj['Organization']['contained'][k]['Endpoint'][
+                                'address']['value']
+                        if use_name == 'Retrieve Documents':
+                            iti39 = sub_json_obj['Organization']['contained'][k]['Endpoint'][
+                                'address']['value']
+                    except KeyError:
+                        # will hopefully be inherited from parent later
+                        pass
+            except KeyError:
+                # will hopefully be inherited from parent later
+                pass
+
+            try:
+                partOf = sub_json_obj['Organization']['partOf']['identifier']['value']['value']
+                partOf = partOf.replace('urn:oid:', '')
+            except KeyError:
+                pass
+
+            oid_dict[oid] = {
+                'id': oid,
+                'iti55': iti55,
+                'iti38': iti38,
+                'iti39': iti39,
+                'part_of': partOf
+            }
+
+    # PART 2: GENERATE LIST OF DICTIONARIES FOR EACH ENTRY, INCLUDING URLS USING ID_DICT
+
+    final_list = []
+
+    def country_code_clean(country_code):
+        if len(country_code) > 2:
+            return country_code[:2]
+        else:
+            return country_code
+
+    def state_clean(state_code):
+        if len(state_code) > 2:
+            return state_code[:2].upper()
+        else:
+            return state_code.upper()
+
+    def zipcode_clean(zipcode):
+        if len(zipcode) == 5:
+            return zipcode
+        elif len(zipcode) > 5:
+            return zipcode[:5]
+        elif len(zipcode) < 5:
+            return (5-len(zipcode))*'0' + zipcode
+
+    json_list_length = len(json_list)
+    for i in range(json_list_length):
+        json_obj = json_list[i]['Bundle']['entry']
+        json_obj_length = len(json_obj)
+        for j in range(json_obj_length):
+            sub_json_obj = json_obj[j]['resource']
+
+            oid = None
+            name = None
+            address = None
+            country_code = None
+            state = None
+            longitude = None
+            latitude = None
+            zipcode = None
+
+            iti55 = None
+            iti38 = None
+            iti39 = None
+
+            partOf = None
+            managingOrg = None
+
+            status = True
+
+            try:
+                oid = sub_json_obj['Organization']['id']['value']
+            except KeyError:
+                print(f'Warning, missing id: {sub_json_obj}')
+
+            try:
+                name = sub_json_obj['Organization']['name']['value']
+            except KeyError:
+                print(f'Warning, missing name: {sub_json_obj}')
+                pass
+
+            try:
+                partOf = sub_json_obj['Organization']['partOf']['identifier']['value']['value']
+                partOf = partOf.replace('urn:oid:', '')
+            except KeyError:
+                print(f'Warning, missing part_of:{sub_json_obj}')
+
+            try:
+                managingOrg = sub_json_obj['Organization']['managingOrg']['reference']['value']
+                managingOrg = managingOrg.split('/')[-1]
+            except KeyError:
+                print(f'Warning, missing managing org:{sub_json_obj}')
+
+            if recursively_get_urls(oid, oid_dict) is not None:
+                inherit_parent = recursively_get_urls(oid, oid_dict)
+                iti55 = inherit_parent['iti55']
+                iti38 = inherit_parent['iti38']
+                iti39 = inherit_parent['iti39']
+                oid = inherit_parent['id']
+
+            try:
+                address = sub_json_obj['Organization']['address']
+                country_code = country_code_clean(
+                    sub_json_obj['Organization']['address']['country']['value'])
+                state = state_clean(
+                    sub_json_obj['Organization']['address']['state']['value'])
+                zipcode = zipcode_clean(
+                    sub_json_obj['Organization']['address']['postalCode']['value'])
+            except TypeError:
+                # print(i,j)
+                print(f'Warning, error in address formatting:{sub_json_obj}')
+
+            except KeyError:
+                print(f'Warning, missing address:{sub_json_obj}')
+
+            try:
+                longitude = sub_json_obj['Organization']['address']['extension'][
+                    'valueCodeableConcept']['coding']['value']['position']['longitude'][
+                    'value']
+                latitude = sub_json_obj['Organization']['address']['extension'][
+                    'valueCodeableConcept']['coding']['value']['position']['latitude']['value']
+            except TypeError:
+                # print(i,j)
+                print(f'Warning, error in longitude/latitude formatting:{sub_json_obj}')
+
+            except KeyError:
+                print(f'Warning, missing latitude/longitude:{sub_json_obj}')
+
+            try:
+                status = sub_json_obj['Organization']['active']['value']
+            except KeyError:
+                print(f'Warning, missing status')
+
+            final_list.append({
+                'id': oid,
+                'name': name,
+                'resource': sub_json_obj,
+                'iti55_responder': iti55,
+                'iti38_responder': iti38,
+                'iti39_responder': iti39,
+                'address': address,
+                'state': state,
+                'country_code': country_code,
+                'zipcode': zipcode,
+                'longitude': longitude,
+                'latitude': latitude,
+                'part_of': partOf,
+                'managing_org': managingOrg,
+                'status': True
+            })
+    return final_list
+
 
 def get_cq_db_connection():
     return psycopg2.connect(
         host=DB_HOST_NAME,
-        port=,
+        port=5432,
         user=secret_params['db_username'],
         password=secret_params['db_password'],
-        database=''
+        database='carequality'
     )
 
 
-def read_data_from_s3(file_name):
-    s3_object = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=file_name)
-    data = json.loads(s3_object['Body'].read().decode('utf-8'))
-    return data
+def process_data():
+    complete_json = utils.read_data_from_s3('downloaded_json_list.json', s3_client, S3_BUCKET_NAME)
+    json_list = []
+    for i in range(len(complete_json)):
+        json_list.append(json.loads(complete_json[i]))
+    final_list = traverse_json_list(json_list)
+    return final_list
 
 
-def strip_oid(oid):
-    return oid if 'urn:oid:' not in oid else oid.split('urn:oid:')[1]
-
-
-def strip_org_name(managing_org):
+def insert_table(processed_json_list, start, batch_size):
     '''
-    examples input: org.sequoiaproject.fhir.stu3/Organization/Broker's Broker
+    Inserts the processed json list into the database.
+    Arguments:
+    processed_json_list: list of dictionaries
     '''
-    if '/' in managing_org:
-        return managing_org.split('/')[-1]
-    else:
-        return managing_org
-
-
-def get_part_of(resource):
-    try:
-        if type(resource) is str:
-            resource = json.loads(resource)
-        stripped = strip_oid(
-            resource['Organization']['partOf']['identifier']['value']['value'])
-        if len(stripped) == 0:
-            return None
+    json_to_insert = processed_json_list[start:start + batch_size]
+    NO_URL_CASES = []
+    for i in range(len(json_to_insert)):
+        try:
+            json_to_insert[i]['oid'] = json_to_insert[i].pop('id')
+        except:
+            pass
+        try:
+            json_to_insert[i]['resource'] = json.dumps(json_to_insert[i]['resource'])
+        except:
+            pass
+        try:
+            json_to_insert[i]['address'] = json.dumps(json_to_insert[i]['address'])
+        except:
+            pass
+        try:
+            json_to_insert[i]['longitude'] = float(json_to_insert[i]['longitude'])
+        except:
+            # print(LIST[i])
+            json_to_insert[i]['longitude'] = None
+        try:
+            json_to_insert[i]['latitude'] = float(json_to_insert[i]['latitude'])
+        except:
+            json_to_insert[i]['latitude'] = None
+        if i % 10000 == 0:
+            print(i)
+        # GENERATE LIST OF CASES WITH NO URLS
+        if 'iti55_responder' in json_to_insert[i]:
+            if json_to_insert[i]['iti55_responder'] == 'null' or json_to_insert[i][
+                    'iti55_responder'] == None:
+                NO_URL_CASES.append(i)
+                # del LIST[i]
+                continue
         else:
-            return stripped
-    except:
-        return None
-
-
-def get_active(resource):
-    try:
-        if type(resource) is str:
-            resource = json.loads(resource)
-
-        active_status = resource['Organization']['active']['value']
-        if type(active_status) is bool:
-            return active_status
-
-        if active_status.lower() == 'true':
-            return True
+            NO_URL_CASES.append(i)
+            # del LIST[i]
+            continue
+        if 'iti39_responder' in json_to_insert[i]:
+            if json_to_insert[i]['iti39_responder'] == 'null' or json_to_insert[i][
+                    'iti39_responder'] == None:
+                NO_URL_CASES.append(i)
+                # del LIST[i]
+                continue
         else:
-            return False
-    except:
-        return False
-
-
-def get_managing_org(resource):
-    try:
-        if type(resource) is str:
-            resource = json.loads(resource)
-        stripped = strip_org_name(
-            resource['Organization']['managingOrg']['reference']['value'])
-        if len(stripped) == 0:
-            return None
+            NO_URL_CASES.append(i)
+            # del LIST[i]
+            continue
+        if 'iti38_responder' in json_to_insert[i]:
+            if json_to_insert[i]['iti38_responder'] == 'null' or json_to_insert[i][
+                    'iti38_responder'] == None:
+                NO_URL_CASES.append(i)
+                # del LIST[i]
+                continue
         else:
-            return stripped
-    except:
-        return None
+            NO_URL_CASES.append(i)
+            # del LIST[i]
+            continue
 
+    # NO_URL_INSERT = []
+    NO_URL_CASES.reverse()
+    for index in NO_URL_CASES:
+        del json_to_insert[index]
 
-def update_table(cur, table_name, update_data, condition_column, condition_value):
-    # Construct the SET part of the query
-    set_clause = ', '.join(
-        [f"{key} = %({key})s" for key in update_data.keys()])
+    for entry in json_to_insert:
+        if entry.keys() != json_to_insert[0].keys():
+            print(f'Error due to missing fields in the following entries {entry}')
+            json_to_insert.remove(entry)
 
-    # Construct the UPDATE query
-    query = f"""
-    UPDATE {table_name}
-    SET {set_clause}
-    WHERE {condition_column} = %({condition_column})s
-    """
-
-    # Add the condition value to the update_data dictionary
-    update_data[condition_column] = condition_value
-
-    # Execute the query
-    cur.execute(query, update_data)
-    return
-
-
-def insert_one_org_one_iteration(org_info, cur, second_loop_onwards=False):
-    inherited_parent_urls = 0  # did not inherit parent url
-    if not second_loop_onwards:
-        insertion_materials = {"oid": strip_oid(org_info['oid']),
-                               "name": org_info['name'],
-                               "resource": org_info['resource'],
-                               "iti55_responder": org_info['iti55_responder'],
-                               "iti38_responder": org_info['iti38_responder'],
-                               "iti39_responder": org_info['iti39_responder'],
-                               "address": org_info['address'],
-                               "longitude": org_info['longitude'],
-                               "latitude": org_info['latitude'],
-                               "zipcode": org_info['zipcode'],
-                               "country_code": org_info['country_code'],
-                               "part_of": get_part_of(org_info['resource']),
-                               "managing_org": get_managing_org(org_info['resource']),
-                               "status": get_active(org_info['resource'])
-                               }
-    else:
-        cur.execute(f"""SELECT
-                    oid,
-                    name,
-                    resource,
-                    iti55_responder,
-                    iti38_responder,
-                    iti39_responder,
-                    address,
-                    longitude,
-                    latitude,
-                    zipcode,
-                    country_code,
-                    part_of,
-                    managing_org,
-                    status
-                    FROM {CQPROD_STU3_TABLE_NAME} WHERE
-                    oid = '{org_info['oid']}' or oid = 'urn:oid:{org_info['oid']}'"""
-                    )
-        entry = cur.fetchone()
-        insertion_materials = {
-            'oid': entry[0],
-            'name': entry[1],
-            'resource': entry[2],
-            'iti55_responder': entry[3],
-            'iti38_responder': entry[4],
-            'iti39_responder': entry[5],
-            'address': entry[6],
-            'longitude': entry[7],
-            'latitude': entry[8],
-            'zipcode': entry[9],
-            'country_code': entry[10],
-            'part_of': entry[11],
-            'managing_org': entry[12],
-            'status': entry[13]
-        }
-        for key, value in insertion_materials.items():
-            if type(value) is dict or type(value) is bytes:
-                insertion_materials[key] = json.dumps(value)
-            else:
-                insertion_materials[key] = value
-
-    if insertion_materials['part_of'] is not None:
-        # inherit managing_org from parent
-        cur.execute(
-            f"SELECT managing_org FROM {CQPROD_STU3_TABLE_NAME} WHERE oid = '{insertion_materials['part_of']}' or oid = 'urn:oid:{insertion_materials['part_of']}'")
-        inherited_managing_org = cur.fetchone()
-        if inherited_managing_org is not None:
-            insertion_materials['managing_org'] = inherited_managing_org[0]
-        # if the urls aren't all there
-        if not all([insertion_materials['iti55_responder'],
-                    insertion_materials['iti38_responder'],
-                    insertion_materials['iti39_responder']]):
-            cur.execute(
-                f"SELECT iti55_responder, iti38_responder, iti39_responder FROM {CQPROD_STU3_TABLE_NAME} WHERE oid = '{insertion_materials['part_of']}' or oid = 'urn:oid:{insertion_materials['part_of']}'")
-            parent_urls = cur.fetchone()
-            if parent_urls is not None and all(
-                    [parent_url is not None for parent_url in parent_urls]):
-                inherited_parent_urls = 1  # did inherit parent url
-                insertion_materials['iti55_responder'] = parent_urls[0]
-                insertion_materials['iti38_responder'] = parent_urls[1]
-                insertion_materials['iti39_responder'] = parent_urls[2]
-                insertion_materials['oid'] = insertion_materials['part_of']
-
-    if not second_loop_onwards:
-        insert_columns = ', '.join(insertion_materials.keys())
-        insert_place_holders = ', '.join(
-            ['%s'] * len(insertion_materials))  # placeholder for each value
-        insert_query = f"INSERT INTO {CQPROD_STU3_TABLE_NAME} ({insert_columns}) VALUES ({insert_place_holders})"
-        query = insert_query
-        value = tuple(insertion_materials.values())
-        cur.execute(query, value)
-
-    else:
-        update_table(cur, CQPROD_STU3_TABLE_NAME, insertion_materials,
-                     'oid', "urn:oid:"+insertion_materials['oid'])
-
-    return inherited_parent_urls
-
-
-def clean_up_final_entries(cur):
-    # loop through all entries, and clean up all that do not have:
-    # all 3 urls, "longitude", "latitude", "zipcode"
-    illegal_count = 0
-    cur.execute(
-        f"SELECT oid, iti55_responder, iti38_responder, iti39_responder, longitude, latitude, zipcode FROM {CQPROD_STU3_TABLE_NAME}")
-    entries = cur.fetchall()
-    for entry in entries:
-        illegal_count += 1
-        if not all(entry):
-            cur.execute(
-                f"DELETE FROM {CQPROD_STU3_TABLE_NAME} WHERE oid = '{entry[0]}'")
-
-    print(f"cleaned up {illegal_count} entries")
-    return
-
-
-def insert_prod_directory():
-    # TODO: instead of reading data from s3, pull live from the directory url
     connection = get_cq_db_connection()
-    connection.autocommit = True
     cur = connection.cursor()
-    cur.execute(f"DELETE FROM {CQPROD_STU3_TABLE_NAME};")
 
-    directory_data = read_data_from_s3('')
+    if start == 0:  # only clear table if it's the first batch of insertion
+        query = f"TRUNCATE {TABLE_NAME}"
+        cur.execute(query)
 
-    inheritance_history = []
-    number_of_entries_inheriting_urls = 0
+    # INSERT ENTRIES WITH ALL NON-NULL FIELDS
+    insertion_materials = json_to_insert
+    insert_columns = ', '.join(insertion_materials[0].keys())
+    insert_place_holders = ', '.join(['%s'] * len(insertion_materials[0]))
 
-    # loop 1, with original data
-    for org_info in directory_data:
-        number_of_entries_inheriting_urls += insert_one_org_one_iteration(
-            org_info, cur)
-    print(f"number of entries inheriting urls: {number_of_entries_inheriting_urls} on iteration 0")
-    inheritance_history.append(number_of_entries_inheriting_urls)
+    value = list(tuple(json_to_insert[i].values()) for i in range(len(json_to_insert)))
+    '''
+    values_text = ''
+    for i in range(len(LIST)-1):
+        values_text = values_text +f'({value[i]}),'
+    values_text = values_text + f'({value[-1]})'
+    '''
 
-    # loop 2-5, with what's in the db
-    for i in range(1, 5):
-        # select entire row with every column name
-        if inheritance_history[-1] == 0:
-            break  # early break if we find we're not inheriting anymore
-        number_of_entries_inheriting_urls = 0
-        cur.execute(f"SELECT oid FROM {CQPROD_STU3_TABLE_NAME}")
-        for entry in cur.fetchall():
-            number_of_entries_inheriting_urls += insert_one_org_one_iteration(
-                {"oid": entry[0]}, cur, second_loop_onwards=True)
-        print(
-            f"number of entries inheriting urls: {number_of_entries_inheriting_urls} on iteration {i}")
-        inheritance_history.append(number_of_entries_inheriting_urls)
+    query = f"INSERT INTO {TABLE_NAME} ({insert_columns}) VALUES ({insert_place_holders})"
+    psycopg2.extras.execute_batch(cur, query, value)
 
-    print("inheritance history:", inheritance_history)
-    clean_up_final_entries(cur)
-
+    connection.commit()
+    cur.close()
     connection.close()
-
-    return

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type='text/xsl' href='CDA.xsl'?>
+<ClinicalDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:hl7-org:v3"
+    xmlns:cda="urn:hl7-org:v3" xmlns:sdtc="urn:hl7-org:sdtc">
+    <!-- This is an example of an unstructured document. See component/nonXMLbody -->
+    <realmCode code="US" />
+    <typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040" />
+    <templateId root="2.16.840.1.113883.10.20.22.1.1" />
+    <templateId root="2.16.840.1.113883.10.20.22.1.10" />
+    <templateId root="2.16.840.1.113883.10.20.22.1.1" extension="2014-08-01" />
+    <templateId root="2.16.840.1.113883.10.20.22.1.10" extension="2015-08-01" />
+    <id extension="X451212" root="2.16.840.1.113883.19.5.999535454.1" />
+    <code codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" code="46240-8"
+        displayName="History of Hospitalizations+Outpatient visits Narrative" />
+    <title>Hospital and Outpatient Visits Narrative</title>
+    <!--When the document is signed by the provider-->
+    <effectiveTime value="202004201918-0800" />
+    <confidentialityCode code="N" codeSystem="2.16.840.1.113883.5.25" displayName="normal" />
+    <languageCode code="en-US" />
+
+    <recordTarget>
+        <patientRole>
+            <!-- Fake Social Security Number using the actual SSN OID. -->
+            <id extension="0" root="" />
+            <addr use="HP">
+                <streetAddressLine>unknown</streetAddressLine>
+                <city>unknown</city>
+                <state>unknown</state>
+                <postalCode>unknown</postalCode>
+                <country>unknown</country>
+            </addr>
+            <telecom value="unknown" use="HP" />
+            <patient>
+                <name use="L">
+                    <given>unknown</given>
+                    <family>unknown</family>
+                </name>
+                <administrativeGenderCode code="U" codeSystem="2.16.840.1.113883.12.1"
+                    displayName="Unknown" />
+                <birthTime value="19530302" />
+                <raceCode code="UNK" displayName="unknown"
+                    codeSystem="2.16.840.1.113883.6.238" codeSystemName="Race &amp; Ethnicity - CDC" />
+                <ethnicGroupCode code="UNK" displayName="unknown"
+                    codeSystem="2.16.840.1.113883.6.238" codeSystemName="Race &amp; Ethnicity - CDC" />
+            </patient>
+            <providerOrganization>
+                <id root="" />
+                <name>Community Health Hospital</name>
+                <telecom use="WP" value="unknown" />
+                <addr>
+                    <streetAddressLine>unknown</streetAddressLine>
+                    <city>unknown</city>
+                    <state>unknown</state>
+                    <postalCode>unknown</postalCode>
+                    <country>unknown</country>
+                </addr>
+            </providerOrganization>
+        </patientRole>
+    </recordTarget>
+    <author>
+        <time value="202004201918-0800" />
+        <assignedAuthor>
+            <id root="unknown" />
+            <code code="200000000X" codeSystem="2.16.840.1.113883.6.101"
+                displayName="Allopathic &amp; Osteopathic Physicians" />
+            <addr>
+                <streetAddressLine>unknown</streetAddressLine>
+                <city>unknown</city>
+                <state>unknown</state>
+                <postalCode>unknown</postalCode>
+                <country>unknown</country>
+            </addr>
+            <telecom use="WP" value="unknown" />
+            <assignedPerson>
+                <name>
+                    <given>unknown</given>
+                    <family>unknown</family>
+                </name>
+            </assignedPerson>
+        </assignedAuthor>
+    </author>
+    <!-- The informant represents any sources of information for document content -->
+    <!-- The custodian represents the organization charged with maintaining the original source
+    document -->
+    <custodian>
+        <assignedCustodian>
+            <representedCustodianOrganization>
+                <id root="" />
+                <name></name>
+                <telecom value="" use="WP" />
+                <addr use="WP">
+                    <streetAddressLine></streetAddressLine>
+                    <city></city>
+                    <state></state>
+                    <postalCode></postalCode>
+                    <country></country>
+                </addr>
+            </representedCustodianOrganization>
+        </assignedCustodian>
+    </custodian>
+
+    <component>
+        <nonXMLBody>
+            <!-- the acceptable mediaType from 2.16.840.1.113883.11.20.7.1 are
+			application/msword application/pdf text/plain text/rtf
+			text/html image/gif image/tiff image/jpeg image/png -->
+            <text mediaType="text/plain" representation="B64">
+                TE9DQUwgVElUTEU6IFNVUkdJQ0FMIENPTlNVTFQgICAgICAgICAgICAgICAgICAgICAgICAgCgpESUNUIERBVEU6IEFQUiAyMCwgMjAyMEAxNzowMyAgICAgRU5UUlkgREFURTogQVBSIDIwLCAyMDIwQDE3OjA0OjE2ICAgICAgCkRJQ1RBVEVEIEJZOiBCQUxJTU9PRCwgTU9TVEFGQSAgICBBVFRFTkRJTkc6IEFHVVJULCBUSE9NQVMgSk9TRVBIClVSR0VOQ1k6IHJvdXRpbmUgICAgICAgICAgICAgICAgICBTVEFUVVM6IFNJR05FRCBOT1QgWUVUIENPU0lHTkVEICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICoqKiBOT1QgWUVUIENPU0lHTkVEICoqKiAgICAgICAgICAgICAgICAgICAgICAgICAgIAoKUGF0aWVudApDQzogQ2hyb25pYyBjZXJ2aWNhbCBwYWluLCBzdGFibGUgc3ltcHRvbWF0b2xvZ3kuCgpEWDogQ2VydmljYWwgZGlzYyBkZWdlbmVyYXRpb24sIHVuc3BlY2lmaWVkIGNlcnZpY2FsIHJlZ2lvbiBvZiBjZXJ2aWNhbCBzcGluZSAoTTUwLjMwKSwgbm8gZm9jYWwgbmV1cm9kZWZpY2l0LgoKUExBTjogRi91IHJvdXRpbmUsIHB0IGlzIG5vdCBpbnRlcmVzdGVkIGluIGludmFzaXZlIHByb2NlZHVyZSBvciBzdXJnaWNhbCBpbnRlcnZlbnRpb24gYXQgdGhpcyB0aW1lLgogCkVsZWN0cm9uaWNhbGx5IHNpZ25lZCBieSBNb3N0YWZhIEJBTElNT09EIDA0LzIwLzIwMjAgMTc6MDc=
+            </text>
+        </nonXMLBody>
+    </component>
+</ClinicalDocument>

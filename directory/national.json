@@ -1,0 +1,83 @@
+[
+    {
+      "oid": "2.16.840.1.113883.3.564.1",
+      "name": "athenahealth, Inc.",
+      "iti55_responder": "https://carequality.athenahealth.com/xcpd/v1/CAREQUALITY%3A%3AXCPD",
+      "iti38_responder": "https://carequality.athenahealth.com/xca/rsq/v1/CAREQUALITY%3A%3AXCA",
+      "iti39_responder": "https://carequality.athenahealth.com/xca/rds/v1/CAREQUALITY%3A%3AXCA",
+      "managing_org": "athenahealth"
+    },
+    {
+      "oid": "1.2.840.114350.1.13.418.2.7.3.688884.100",
+      "name": "CVS Health & MinuteClinic",
+      "iti55_responder": "https://careeverywhere.minuteclinic.com:14430/Interconnect-CareEverywhere/wcf/epic.community.hie/xcpdrespondinggatewaysync.svc/ceq",
+      "iti38_responder": "https://careeverywhere.minuteclinic.com:14430/Interconnect-CareEverywhere/wcf/epic.community.hie/respondinggateway.svc/ceq",
+      "iti39_responder": "https://careeverywhere.minuteclinic.com:14430/Interconnect-CareEverywhere/wcf/epic.community.hie/respondinggateway.svc/mtom-ceq",
+      "managing_org": "Epic"
+    },
+    {
+      "oid": "2.16.840.1.113883.3.2054.2.1.1",
+      "name": "Surescripts",
+      "iti55_responder": "https://rle.surescripts.net/IHE/gateway/xcpd",
+      "iti38_responder": "https://rle.surescripts.net/IHE/gateway/xcaq",
+      "iti39_responder": "https://rle.surescripts.net/IHE/gateway/xcar",
+      "managing_org": "Surescripts"
+    },
+    {
+      "oid": "2.16.840.1.113883.3.109.3.0.4.2.1",
+      "name": "NextGen Share",
+      "iti55_responder": "https://rg-pd.nextgenshareaws.com:4437/Gateway/PatientDiscovery/1_0/NhinService/NhinPatientDiscovery",
+      "iti38_responder": "https://rg-dq.nextgenshareaws.com:4437/Gateway/DocumentQuery/2_0/NhinService/RespondingGateway_Query_Service/DocQuery",
+      "iti39_responder": "https://rg-dr.nextgenshareaws.com:4437/Gateway/DocumentRetrieve/2_0/NhinService/RespondingGateway_Retrieve_Service/DocRetrieve",
+      "managing_org": "NextGen"
+    },
+    {
+      "oid": "1.2.840.114350.1.13.621.2.7.3.688884.100",
+      "name": "OptumCare",
+      "iti55_responder": "https://epiccareeverywhere.optum.com:14430/CEPRD/wcf/epic.community.hie/xcpdrespondinggatewaysync.svc/ceq",
+      "iti38_responder": "https://epiccareeverywhere.optum.com:14430/CEPRD/wcf/epic.community.hie/respondinggateway.svc/ceq",
+      "iti39_responder": "https://epiccareeverywhere.optum.com:14430/CEPRD/wcf/epic.community.hie/respondinggateway.svc/mtom-ceq",
+      "managing_org": "Epic"
+    },
+    {
+      "oid": "2.16.840.1.113883.3.8512.2000.1",
+      "name": "Federal HIE - DoD, VA, USCG",
+      "iti55_responder": "https://patientdiscovery.api.commonwellalliance.org/XCPD/RespondingGateway.svc",
+      "iti38_responder": "https://patientdiscovery.api.commonwellalliance.org/xca/xcaStoredQuery.svc",
+      "iti39_responder": "https://patientdiscovery.api.commonwellalliance.org/XCA/XcaRetrieveDocumentSet.svc",
+      "managing_org": "CommonWell"
+    },
+    {
+      "oid": "2.16.840.1.113883.3.8391",
+      "name": "ParticleHealth",
+      "iti55_responder": "https://carequality.particlehealth.com/services/xcpd",
+      "iti38_responder": "https://carequality.particlehealth.com/services/xca-iti38",
+      "iti39_responder": "https://carequality.particlehealth.com/services/xca-iti39",
+      "managing_org": "Particle Health"
+    },
+    {
+      "oid": "1.3.6.1.4.1.22812.40.10903841.1",
+      "name": "Teladoc Health",
+      "iti55_responder": "https://brokeringrespondinggateway-prod.isg.az.allscriptscloud.com/iti55/1.3.6.1.4.1.22812.40.10903841.1",
+      "iti38_responder": "https://brokeringrespondinggateway-prod.isg.az.allscriptscloud.com/iti38/1.3.6.1.4.1.22812.40.10903841.1",
+      "iti39_responder": "https://brokeringrespondinggateway-prod.isg.az.allscriptscloud.com/iti39/1.3.6.1.4.1.22812.40.10903841.1",
+      "managing_org": "Allscripts"
+    },
+    {
+      "oid": "1.2.840.114350.1.13.562.2.7.3.688884.100",
+      "name": "Cigna",
+      "iti55_responder": "https://epiccearr.healthcare.cigna.com:14430/Interconnect-PRD-CE/wcf/epic.community.hie/xcpdrespondinggatewaysync.svc/ceq",
+      "iti38_responder": "https://epiccearr.healthcare.cigna.com:14430/Interconnect-PRD-CE/wcf/epic.community.hie/respondinggateway.svc/ceq",
+      "iti39_responder": "https://epiccearr.healthcare.cigna.com:14430/Interconnect-PRD-CE/wcf/epic.community.hie/respondinggateway.svc/mtom-ceq",
+      "managing_org": "Epic"
+    },
+      {
+      "oid": "1.2.840.114350.1.13.595.2.7.3.688884.100",
+      "name": "Planned Parenthood Federation of America",
+      "iti55_responder": "https://Sfd.et1154.epichosted.com:14430/Interconnect-CE-PRD/wcf/epic.community.hie/xcpdrespondinggatewaysync.svc/ceq",
+      "iti38_responder": "https://Sfd.et1154.epichosted.com:14430/Interconnect-CE-PRD/wcf/epic.community.hie/respondinggateway.svc/ceq",
+      "iti39_responder": "https://Sfd.et1154.epichosted.com:14430/Interconnect-CE-PRD/wcf/epic.community.hie/respondinggateway.svc/mtom-ceq",
+      "managing_org": "Epic"
+    }
+  ]
+  

@@ -1,0 +1,191 @@
+{
+  "Allergy and Immunology": {
+    "code": "207K00000X",
+    "display_name": "Allergy & Immunology Physician"
+  },
+  "Anesthesiology": {
+    "code": "207L00000X",
+    "display_name": "Anesthesiology Physician"
+  },
+  "Chiropractic": { "code": "111N00000X", "display_name": "Chiropractor" },
+  "Clinical Pharmacology": {
+    "code": "208U00000X",
+    "display_name": "Clinical Pharmacology Physician"
+  },
+  "Dentistry and Orthodontics": {
+    "code": "1223X0400X",
+    "display_name": "Orthodontics and Dentofacial Orthopedic Dentist"
+  },
+  "Dentistry - Oral and Maxillofacial Surgery": {
+    "code": "1223S0112X",
+    "display_name": "Oral and Maxillofacial Surgery (Dentist)"
+  },
+  "Dermatology": {
+    "code": "207N00000X",
+    "display_name": "Dermatology Physician"
+  },
+  "Emergency Medicine": {
+    "code": "207P00000X",
+    "display_name": "Emergency Medicine Physician"
+  },
+  "Family Medicine": {
+    "code": "207Q00000X",
+    "display_name": "Family Medicine Physician"
+  },
+  "Geriatrics": {
+    "code": "2251G0304X",
+    "display_name": "Geriatric Physical Therapist"
+  },
+  "Hospitalist": {
+    "code": "208M00000X",
+    "display_name": "Hospitalist Physician"
+  },
+  "Internal Medicine": {
+    "code": "207R00000X",
+    "display_name": "Internal Medicine Physician"
+  },
+  "Internal Medicine - Cardiology": {
+    "code": "207RA0001X",
+    "display_name": "Advanced Heart Failure and Transplant Cardiology Physician"
+  },
+  "Internal Medicine - Endocrinology": {
+    "code": "207RE0101X",
+    "display_name": "Endocrinology, Diabetes & Metabolism Physician"
+  },
+  "Internal Medicine - Gastroenterology": {
+    "code": "207RG0100X",
+    "display_name": "Gastroenterology Physician"
+  },
+  "Internal Medicine - Nephrology": {
+    "code": "207RN0300X",
+    "display_name": "Nephrology Physician"
+  },
+  "Internal Medicine - Oncology": {
+    "code": "207RH0003X",
+    "display_name": "Hematology & Oncology Physician"
+  },
+  "Internal Medicine - Primary Care": {
+    "code": "207R00000X",
+    "display_name": "Internal Medicine Physician"
+  },
+  "Internal Medicine - Pulmonology": {
+    "code": "207RP1001X",
+    "display_name": "Pulmonary Disease Physician"
+  },
+  "Internal Medicine - Rheumatology": {
+    "code": "207RR0500X",
+    "display_name": "Rheumatology Physician"
+  },
+  "Legal Medicine": {
+    "code": "209800000X",
+    "display_name": "Legal Medicine (M.D./D.O.) Physician"
+  },
+  "Medical Genetics": {
+    "code": "207SG0205X",
+    "display_name": "Ph.D. Medical Genetics Physician"
+  },
+  "Mental Health": {
+    "code": "225XM0800X",
+    "display_name": "Mental Health Occupational Therapist"
+  },
+  "Neurology": { "code": "2084N0400X", "display_name": "Neurology Physician" },
+  "Neurosurgery": {
+    "code": "207T00000X",
+    "display_name": "Neurological Surgery Physician"
+  },
+  "Obstetrics and Gynecology": {
+    "code": "207V00000X",
+    "display_name": "Obstetrics & Gynecology Physician"
+  },
+  "Ophthalmology": {
+    "code": "207W00000X",
+    "display_name": "Ophthalmology Physician"
+  },
+  "Orthopaedics": {
+    "code": "207X00000X",
+    "display_name": "Orthopaedic Surgery Physician"
+  },
+  "Otolaryngology - HNS (ENT)": {
+    "code": "207Y00000X",
+    "display_name": "Otolaryngology Physician"
+  },
+  "Pain Medicine": {
+    "code": "208VP0000X",
+    "display_name": "Pain Medicine Physician"
+  },
+  "Pathology": {
+    "code": "207ZP0101X",
+    "display_name": "Anatomic Pathology Physician"
+  },
+  "Pediatrics": {
+    "code": "208000000X",
+    "display_name": "Pediatrics Physician"
+  },
+  "Physical Medicine and Rehabilitation (PMR)": {
+    "code": "208100000X",
+    "display_name": "Physical Medicine & Rehabilitation Physician"
+  },
+  "Physical Therapy": {
+    "code": "225100000X",
+    "display_name": "Physical Therapist"
+  },
+  "Plastic Surgery": {
+    "code": "208200000X",
+    "display_name": "Plastic Surgery Physician"
+  },
+  "Podiatry": { "code": "213E00000X", "display_name": "Podiatrist" },
+  "Preventative Medicine": {
+    "code": "2083P0901X",
+    "display_name": "Public Health & General Preventive Medicine Physician"
+  },
+  "Primary Care": {
+    "code": "363LP2300X",
+    "display_name": "Primary Care Nurse Practitioner"
+  },
+  "Psychiatry": {
+    "code": "2084P0800X",
+    "display_name": "Psychiatry Physician"
+  },
+  "Radiology": {
+    "code": "2085B0100X",
+    "display_name": "Body Imaging Physician"
+  },
+  "Sleep Medicine": {
+    "code": "207RS0012X",
+    "display_name": "Sleep Medicine (Internal Medicine) Physician"
+  },
+  "Surgery": { "code": "208600000X", "display_name": "Surgery Physician" },
+  "Surgery - Bariatric": {
+    "code": "208600000X",
+    "display_name": "Surgery Physician"
+  },
+  "Surgery - General": {
+    "code": "208600000X",
+    "display_name": "Surgery Physician"
+  },
+  "Surgery - Neurosurgery": {
+    "code": "208600000X",
+    "display_name": "Surgery Physician"
+  },
+  "Surgery - Oncology": {
+    "code": "2086X0206X",
+    "display_name": "Surgical Oncology Physician"
+  },
+  "Surgery - Thoracic": {
+    "code": "208G00000X",
+    "display_name": "Thoracic Surgery (Cardiothoracic Vascular Surgery) Physician"
+  },
+  "Surgery - Vascular": {
+    "code": "2086S0129X",
+    "display_name": "Vascular Surgery Physician"
+  },
+  "Urology": { "code": "208800000X", "display_name": "Urology Physician" },
+  "Veterinary Medicine": {
+    "code": "174M00000X",
+    "display_name": "Veterinarian"
+  },
+  "Other": {
+    "code": "246Z00000X",
+    "display_name": "Other Specialist/Technologist"
+  }
+}

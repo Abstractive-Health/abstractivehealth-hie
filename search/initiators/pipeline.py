@@ -249,7 +249,6 @@ class Pipeline:
                 self.iti39initiators.append(iti_39_initiator)
             except Exception as e:
                 print(f"issue creating iti39 initiator, {e}")
-                # this try except was brought to life by this error log https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252Fprod-ah-useast1-hie-patient/log-events/2024$252F05$252F07$252F$255B$2524LATEST$255Dee0d7bef930649218d151f9094492f85$3Fstart$3D1715096155156$26refEventId$3D38247922349343574172699194757823705471706119218654085254
                 await (asyncio.sleep(0.5))
                 continue
 

@@ -160,7 +160,7 @@ def get_endpoints(zip_states, each=1, exclude_national=True):
                     AND managing_org NOT IN %s
                     AND status
                     """,
-                    (nearby_zipcodes, tuple(BAD_IMPLEMENTERS))
+                    (nearby_zipcodes, tuple())
                 )
                 endpoints = cur.fetchall()
                 if len(filled_endpoints) + len(endpoints) >= each:  # fill "up to"

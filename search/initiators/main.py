@@ -16,7 +16,7 @@ import utils
 from utils import ENV
 
 secretsmanager = boto3.client('secretsmanager')
-secret_id = f"{ENV}-lambda-hie"
+secret_id = f""
 secret_params = json.loads(secretsmanager.get_secret_value(SecretId=secret_id)["SecretString"])
 GOOGLE_API_KEY = secret_params['google_geo_api_key']
 

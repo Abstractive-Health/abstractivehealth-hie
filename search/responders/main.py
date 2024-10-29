@@ -8,12 +8,8 @@ import uuid
 
 import psycopg2
 import requests
-from cqsearch import *
-from iti38initiator import ITI38Initiator
 from iti38responder import ITI38Responder
-from iti39initiator import ITI39Initiator
 from iti39responder import ITI39Responder
-from iti55initiator import ITI55Initiator
 from iti55responder import ITI55Responder
 from lxml import etree
 
